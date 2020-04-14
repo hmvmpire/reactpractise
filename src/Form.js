@@ -1,55 +1,102 @@
-import React from 'react'
+import React,{useState} from 'react'
+function Form({addEmployee}){
+    const [name,setName] =  useState('');
+    const [age,setAge] =  useState('');
+    const [salary,setSalary] =  useState('');
+  
+    const handleSubmit = e =>{
+    e.preventDefault();
+      if(!name) return;
+      addEmployee(name,age,salary);
+      setName('');
+      setAge('');
+      setSalary('');
+    };
 
-class Form extends React.Component
-{
-    constructor()
-    {
-        super()
-        this.state={
-            employee_name:"",
-            employee_salary:"",
-            employee_age:"",
-
-        }
-    }
-    
-    submit()
-    {
-        let url="http://dummy.restapiexample.com/api/v1/create"
-        let data=this.state
-        fetch(url,{
-            method: 'POST',
-            headers:{
-                "Content-type":"application/json",
-                "Accept":"application/json"
-            },
-            body:JSON.stringify(data)
-        }).then((result)=>{
-            result.json().then((resp)=>{
-                alert('Employee data is submitted'); 
-            })
-        })
-        
-    }
-
-    render()
-    {
-        return(
-            <div>
-                <div class="container">
-                    <h2 class="text-center">Add an Employee</h2>
-                    <input class="form-control" type="text" value={this.state.employee_name} name="employee_name" placeholder="Enter your name" onChange={(data)=>{this.setState({employee_name:data.target.value})}}/>
-                    <p style={{color:"red"}}>{this.state.nameError}</p>
-                
-                    <input class="form-control" value={this.state.employee_salary} type="number" name="employee_salary" placeholder="Enter employee salary" onChange={(data)=>{this.setState({employee_salary:data.target.value})}}></input>
-                    <p style={{color:"red"}}>{this.state.passwordError}</p>
-                    <input class="form-control" value={this.state.employee_age} type="number" name="employee_age" placeholder="Enter employee age" onChange={(data)=>{this.setState({employee_age:data.target.value})}}></input>
-                    <p style={{color:"red"}}>{this.state.passwordError}</p>
-                    <button class="btn btn-success" onClick={()=>{this.submit()}}>Submit</button>
-                </div>
-            </div>
-        )
-    }
+  return(
+          <div>
+              <div className="container">
+                  <h2 className="text-center">Add an Employee</h2>
+                  <form onSubmit={handleSubmit}>
+                  <input className="form-control" type="text" value={name}  placeholder="Enter your name" onChange = {e => setName(e.target.value)} />        
+                  <input className="form-control" type="number" value={salary}   placeholder="Enter employee salary" onChange = {e => setSalary(e.target.value)} ></input>
+                  <input className="form-control" type="number" value={age}   placeholder="Enter employee age" onChange = {e => setAge(e.target.value)} ></input>
+                            
+                  <button  className="btn margin-top btn-success" type="submit" >Add</button>
+                  </form>
+              </div>
+          </div>
+      )
 }
 
-export default Form;
+
+function Employees()
+{
+    const[employees, setEmployess] = useState([{
+        name: 'Learn about Angular Hooks',
+        salary: '4011',
+        age: '22'
+      },
+      {
+        name: 'Learn about Angular Hooks',
+        salary: '4022',
+        age: '44'
+    
+      },
+      {
+        name: 'Learn about Angular Hooks',
+        salary: '40411',
+        age: '33'
+    
+      }]);
+    
+      const addEmployee = (name,age,salary) =>{
+        const newEmployee = [...employees,{name,salary,age}];
+        setEmployess(newEmployee);
+      };
+
+      const removeEmployee = index =>{
+        const newEmployee = [...employees];
+        newEmployee.splice(index,1);
+        setEmployess(newEmployee);
+      };
+
+
+    return(
+        <div class="container">
+            <h1 class="text-center">All Employees Data</h1>
+            <br/>
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">employee name</th>
+                    <th scope="col">employee salary</th>
+                    <th scope="col">age</th>
+                    <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        employees ?
+                        employees.map((employee,index)=>
+                            <tr>
+                            <th scope="row">{index}</th>
+                            <td>{employee.name}</td>
+                            <td>$ {employee.salary}</td>
+                            <td>{employee.age}</td>
+                            <td><button className="btn btn-danger" onClick={() => removeEmployee(index) } >Delete</button></td>
+                            </tr>
+                        )
+                        :
+                        null
+                    }
+                </tbody>
+            </table>
+            <Form addEmployee={addEmployee}></Form>
+        </div>
+    )
+    
+}
+
+export default Employees;
